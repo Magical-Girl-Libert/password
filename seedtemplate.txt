@@ -1,0 +1,27 @@
+# サービス名
+SERVICE_NAME=
+
+# ユーザーID
+USER_ID=
+
+# ソルト(後方に付与する文字列)
+SALT=
+
+# 備考
+MEMO="のパスワード"
+
+# パスワードの長さ(最大32)
+LENGTH=32
+
+# パターン(以下から選択)
+# PATTERN_NUMBER    数値のみ(非推奨)
+# PATTERN_ALPHA     数値とアルファベット
+# PATTERN_ALPHA_ADD 数値とアルファベットに加えADD_ASCIIの記号も追加
+# PATTERN_ASCII     数値とアルファベットと記号
+PATTERN=PATTERN_ALPHA
+
+# ダブルクォーテーションを追加する場合は\"としてください
+ADD_ASCII=""
+
+# ハッシュ化を行う回数
+HASH_LOOP=32
