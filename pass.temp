@@ -1,4 +1,0 @@
-#!/bin/bash
-pass.func_name(){
-	passinfoshow func_name.txt $*
-}
