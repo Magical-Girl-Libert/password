@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function pass.seed.gen(){
-    exdir=seed
+    exdir=~/.password/seed
     #seedファイルが存在するか
     if [ ! -d $exdir ]; then
         mkdir seed
