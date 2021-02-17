@@ -67,7 +67,7 @@ function passgen.profile(){
     cat << EOF > $funcfile
 #!/bin/bash
 pass.${file_name}(){
-	passinfoshow ${file_name}.txt \$*
+	passinfo.get ${file_name}.txt \$*
 }
 EOF
 }
