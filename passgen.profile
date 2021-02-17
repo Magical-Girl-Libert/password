@@ -54,14 +54,14 @@ function passgen(){
             #echo "password:${passinfotxt}"
             echo -e ${passinfotxt} >> $infofile
 
-            passgen.profile $funcfile $file_name
+            generatepasswordfile $funcfile $file_name
 
         fi
     done
     source ~/.password/loadprofile.sh
 }
 
-function passgen.profile(){
+function generatepasswordfile(){
     local funcfile=$1
     local file_name=$2
     cat << EOF > $funcfile
