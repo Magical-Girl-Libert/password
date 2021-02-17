@@ -1,6 +1,14 @@
 #!/bin/bash
 
-function pass.seed.gen(){
+function passgen.seed(){
+    local configfile=~/.password/default.conf
+    if [ -e ${configfile} ]; then
+        source ${configfile}
+    else
+        echo "${configfile}が見つかりません"
+        return
+    fi
+    
     exdir=~/.password/seed
     #seedファイルが存在するか
     if [ ! -d $exdir ]; then
@@ -17,13 +25,14 @@ function pass.seed.gen(){
     read userid
     seedarray+="USER_ID=\"${userid}\"\n"
 
-    echo -n "ソルトを入力しますか？(n):"
-    read saltagree;
+    # echo -n "ソルトを入力しますか？(n):"
+    # read saltagree;
     if [ "${saltagree,,}" = "y" ]; then
         echo -n "ソルトを入力して下さい："
         read salt
     else
-        salt="@${servicename}"
+        now="`date`"
+        salt="@`echo -n ${now} | openssl ${ALGORITHM} | sed -e "s/(stdin)= //"`"
     fi
     seedarray+="SALT=\"${salt}\"\n"
 
@@ -52,10 +61,10 @@ function pass.seed.gen(){
     do
         cat <<- EOL
 		0:NO_GENERATE       パスワード生成しない
-		1:PATTERN_NUMBER    数値のみ(非推奨)"
-		2:PATTERN_ALPHA     数値とアルファベット"
-		3:PATTERN_ASCII     数値とアルファベットと記号"
-		4:PATTERN_ALPHA_ADD 数値とアルファベットに加えADD_ASCIIの記号も追加"
+		1:PATTERN_NUMBER    数値のみ(非推奨)       10進数
+		2:PATTERN_ALPHA     数値とアルファベット     62進数
+		3:PATTERN_ASCII     数値とアルファベットと記号 94進数
+		4:PATTERN_ALPHA_ADD 数値とアルファベットに加えADD_ASCIIの記号も追加
 EOL
         echo -n "パスワードの生成パターンを選択して下さい(2):"
         read pattern
@@ -129,6 +138,6 @@ EOL
     echo  -n "passwordを生成しますか？:"
     read passagree
     if [ "${passagree,,}" == "y" ]; then
-        pass.gen
+        passgen
     fi
 }

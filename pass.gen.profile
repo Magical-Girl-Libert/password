@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function pass.gen(){
+function passgen(){
     local configfile=~/.password/default.conf
     if [ -e ${configfile} ]; then
         source ${configfile}
@@ -11,11 +11,12 @@ function pass.gen(){
 
     #seedフォルダのファイルを１つずつ読む
     local basedir=~/.password/seed
+    local passbase=~/.password/pass
     for file in `find ${basedir} -follow -type f -name '*.txt'`; do
         local file_name=`basename ${file} .txt`
         echo ${file_name}
         #passフォルダにseedフォルダと同じファイルがない場合は生成
-        if [ ! -e ~/.password/pass/${file_name}.txt ]; then
+        if [ ! -e ${passbase}/${file_name}.txt ]; then
             #seed設定を読み込み
             source $file
             #パスワードパターン選択
@@ -46,21 +47,27 @@ function pass.gen(){
             fi
             #echo "password:${PASS_WORD}"
             #passフォルダにファイル生成
-            local funcfile=~/.password/pass/${file_name}.profile
-            local infofile=~/.password/pass/${file_name}.txt
+            local funcfile=${passbase}/${file_name}.profile
+            local infofile=${passbase}/${file_name}.txt
             
-            local passinfotxt="\"${SERVICE_NAME}\"\t${USER_ID}\t${PASS_WORD}\t\"${MEMO}\""
+            local passinfotxt="\"${SERVICE_NAME}\"\t${USER_ID}\t${PASS_WORD}\t\"${MEMO}\"\t\"`date "+%Y/%m/%d %H:%M:%S"`\""
             #echo "password:${passinfotxt}"
             echo -e ${passinfotxt} >> $infofile
 
-            cat << EOF > $funcfile
+            passgen.profile $funcfile $file_name
+
+        fi
+    done
+    source ~/.password/loadprofile.sh
+}
+
+function passgen.profile(){
+    local funcfile=$1
+    local file_name=$2
+    cat << EOF > $funcfile
 #!/bin/bash
 pass.${file_name}(){
 	passinfoshow ${file_name}.txt \$*
 }
 EOF
-
-        fi
-    done
-    source ~/.password/loadprofile.sh
 }
