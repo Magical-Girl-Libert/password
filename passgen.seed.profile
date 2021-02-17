@@ -9,13 +9,13 @@ function passgen.seed(){
         return
     fi
     
-    exdir=~/.password/seed
+    local exdir=~/.password/seed
     #seedファイルが存在するか
     if [ ! -d $exdir ]; then
         mkdir seed
     fi
 
-    seedarray=();
+    local seedarray=();
 
     echo -n "サービス名(ファイル名)を入力して下さい："
     read servicename
