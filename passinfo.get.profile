@@ -36,5 +36,3 @@ passinfo.get(){
 		echo -e -n ${array[2]} | clip.exe && echo "パスワードをクリップボードにコピーしました"
 	fi
 }
-
-alias passinfoshow='passinfo.get'
