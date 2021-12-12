@@ -20,11 +20,18 @@ passinfo.get(){
 			"show"    ) echo          "${array[2]}" ;;
 			"memo"    ) echo "memo   : ${array[3]}" ;;
 			"gen"     ) echo "generated : ${array[4]:-nodata}" ;;
+			"regen"   )
+				local BACKUP_PATH=~/".password/backup"
+				mkdir -p ${BACKUP_PATH}"/pass/"
+				mv ~/".password/pass/$1" ${BACKUP_PATH}"/pass/$1_`date "+%Y%m%d-%H%M%S"`.txt"
+				passgen
+			;;
 			"del"     )
-				mkdir -p ~/".password/backup/pass/"
-				mv ~/".password/pass/$1" ~/".password/backup/pass/$1_`date "+%Y%m%d-%H%M%S"`.txt"
-				mkdir -p ~/".password/backup/seed/"
-				mv ~/".password/seed/$1" ~/".password/backup/seed/$1_`date "+%Y%m%d-%H%M%S"`.txt"
+				local BACKUP_PATH=~/".password/backup"
+				mkdir -p ${BACKUP_PATH}"/pass/"
+				mv ~/".password/pass/$1" ${BACKUP_PATH}"/pass/$1_`date "+%Y%m%d-%H%M%S"`.txt"
+				mkdir -p ${BACKUP_PATH}"/seed/"
+				mv ~/".password/seed/$1" ${BACKUP_PATH}"/seed/$1_`date "+%Y%m%d-%H%M%S"`.txt"
 				service_name=`echo ${array[0]} | sed 's/"//g'` 
 				rm ~/".password/pass/${service_name}.profile"
 				passgen
@@ -37,7 +44,8 @@ passinfo.get(){
 				echo "show   : パスワードのみ出力"
 				echo "memo   : 備考を出力"
 				echo "gen    : 生成日時を出力"
-				echo "del    : 生成したパスワードtxtを削除(backup)"
+				echo "regen  : seedファイルからパスワードを再生成します(backupあり)"
+				echo "del    : 生成したseedとパスワードtxtを削除(backup)"
 			;;
 			* ) echo "-hでヘルプを表示できます" ;;
 		esac
