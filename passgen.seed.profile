@@ -124,10 +124,9 @@ EOL
     exseed=$exdir/${servicename}.txt
     if [ -f ${exseed} ]; then
         echo "ファイルが既に存在するためバックアップします。";
-        if [ ! -d seedbak ]; then
-            mkdir seedbak
-        fi
-        mv ${exseed} seedbak/`date "+%Y%m%d-%H%M%S"`_${servicename}.txt
+		local BACKUP_PATH=~/".password/backup"
+		mkdir -p ${BACKUP_PATH}"/seed/"
+		mv ${exseed} ${BACKUP_PATH}"/seed/${servicename}.txt_`date "+%Y%m%d-%H%M%S"`.txt"
     fi
     for l in "${seedarray[@]}"
     do

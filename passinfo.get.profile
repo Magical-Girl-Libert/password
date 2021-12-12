@@ -34,7 +34,8 @@ passinfo.get(){
 				mv ~/".password/seed/$1" ${BACKUP_PATH}"/seed/$1_`date "+%Y%m%d-%H%M%S"`.txt"
 				service_name=`echo ${array[0]} | sed 's/"//g'` 
 				rm ~/".password/pass/${service_name}.profile"
-				passgen
+				unset -f pass.$service_name
+				echo "deleted $service_name"
 			;;
 			"-h" )
 				echo "引数なし : パスワードをコピー"
