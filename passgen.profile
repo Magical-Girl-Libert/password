@@ -24,7 +24,7 @@ function passgen(){
             case "$PATTERN" in
                 "PATTERN_NUMBER"     ) local PATTERN_STR=$PATTERN_NUMBER ;;
                 "PATTERN_ALPHA"      ) local PATTERN_STR=$PATTERN_ALPHA  ;;
-                "PATTERN_ALPHA_ADD"  ) local PATTERN_STR=$PATTERN_ALPHA_ADD  ;;
+                "PATTERN_ALPHA_ADD"  ) local PATTERN_STR=$PATTERN_ALPHA$ADD_ASCII  ;;
                 "PATTERN_ASCII"      ) local PATTERN_STR=$PATTERN_ASCII  ;;
                 "USER"               ) local PATTERN_STR=$PATTERN_USER   ;;
                 *                    ) local NO_GENERATE=true           ;;
@@ -44,13 +44,15 @@ function passgen(){
                     local passwordstr=${passwordstr}${PATTERN_STR:${ascii}:1}
                 done
                 local PASS_WORD=${passwordstr:0:${LENGTH}}
+            else
+                local PASS_WORD=${RESIST_PASSWORD}
             fi
             #echo "password:${PASS_WORD}"
             #passフォルダにファイル生成
             local funcfile=${passbase}/${file_name}.profile
             local infofile=${passbase}/${file_name}.txt
             
-            local passinfotxt="\"${SERVICE_NAME}\"\t${USER_ID}\t${PASS_WORD}\t\"${MEMO}\"\t\"`date "+%Y/%m/%d %H:%M:%S"`\""
+            local passinfotxt="\"${SERVICE_NAME}\"\t${USER_ID}\t${PASS_WORD}\t\"${MEMO}\"\t\"`date "+%Y/%m/%d_%H:%M:%S"`\""
             #echo "password:${passinfotxt}"
             echo -e ${passinfotxt} >> $infofile
 

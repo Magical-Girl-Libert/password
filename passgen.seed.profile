@@ -40,26 +40,11 @@ function passgen.seed(){
     read memo
     seedarray+="MEMO=\"${memo}\"\n"
 
-    exprresult=2
-    length=0
-    while [ ${exprresult} -ge 2 ] || [ ${length} -gt 32 ] || [ ${length} -lt 1 ]
-    do
-        echo -n "パスワードの長さを入力して下さい(最大32)："
-        read length
-        length=${length:-32}
-        expr ${length} + 1 >&/dev/null
-        exprresult=$?
-        if [ ${exprresult} -eq 2 ]; then
-            length=0
-        fi
-    done
-    seedarray+="LENGTH=\"${length}\"\n"
-
     patternresult=2
     pattern=2
-    while [ ${patternresult} -ge 2 ] || [ ${pattern} -gt 4 ] || [ ${pattern} -lt 1 ]
+    while [ ${patternresult} -ge 2 ] || [ ${pattern} -gt 4 ] || [ ${pattern} -lt 0 ]
     do
-        cat <<- EOL
+    cat <<- EOL
 		0:NO_GENERATE       パスワード生成しない
 		1:PATTERN_NUMBER    数値のみ(非推奨)       10進数
 		2:PATTERN_ALPHA     数値とアルファベット     62進数
@@ -72,9 +57,45 @@ EOL
         expr ${pattern} + 1 >&/dev/null
         patternresult=$?
         if [ ${patternresult} -eq 2 ]; then
-            pattern=0
+            pattern=-1
         fi
     done
+    
+    if [ ! ${pattern} -eq 0 ]; then
+
+        exprresult=2
+        length=0
+        while [ ${exprresult} -ge 2 ] || [ ${length} -gt 32 ] || [ ${length} -lt 1 ]
+        do
+            echo -n "パスワードの長さを入力して下さい(最大32)："
+            read length
+            length=${length:-32}
+            expr ${length} + 1 >&/dev/null
+            exprresult=$?
+            if [ ${exprresult} -eq 2 ]; then
+                length=0
+            fi
+        done
+        seedarray+="LENGTH=\"${length}\"\n"
+
+        hashresult=2
+        hashloop=32
+        if [ ! ${pattern} -eq 0 ]; then
+            while [ ${hashresult} -ge 2 ] || [ ${hashloop} -lt 1 ] 
+            do
+                echo -n "ハッシュ化する回数を選択して下さい(${hashloop}):"
+                read hashloop
+                hashloop=${hashloop:-32}
+                expr ${hashloop} + 1 >&/dev/null
+                hashresult=$?
+                if [ ${hashresult} -eq 2 ]; then
+                    hashloop=32
+                fi
+            done
+        fi
+        seedarray+="HASH_LOOP=\"${hashloop}\"\n"
+    fi
+
     patternarray=(
         "NO_GENERATE" \
         "PATTERN_NUMBER" \
@@ -84,28 +105,23 @@ EOL
 
     seedarray+="PATTERN=\"${patternarray[pattern]}\"\n"
 
+    if [ ${pattern} -eq 0 ]; then
+        echo "0:NO_GENERATEが選択されました"
+        echo "※※※このモードではパスワードを生成しません※※※"
+        echo "ダブルクォーテーションを追加する場合は\\\"としてください"
+        echo -n "記憶させるパスワードを入力して下さい:"
+        read resistpassword
+        seedarray+="RESIST_PASSWORD=\"${resistpassword}\"\n"
+    fi
+
     if [ ${pattern} -eq 4 ]; then
         echo "4:PATTERN_ALPHA_ADDが選択されました"
         echo "ダブルクォーテーションを追加する場合は\\\"としてください"
-        echo "追加で入れる記号を入力して下さい:"
+        echo -n "追加で入れる記号を入力して下さい:"
         read addascii
     fi
     seedarray+="ADD_ASCII=\"${addascii}\"\n"
 
-    hashresult=2
-    hashloop=32
-    while [ ${hashresult} -ge 2 ] || [ ${hashloop} -lt 1 ]
-    do
-        echo -n "ハッシュ化する回数を選択して下さい(${hashloop}):"
-        read hashloop
-        hashloop=${hashloop:-32}
-        expr ${hashloop} + 1 >&/dev/null
-        hashresult=$?
-        if [ ${hashresult} -eq 2 ]; then
-            hashloop=32
-        fi
-    done
-    seedarray+="HASH_LOOP=\"${hashloop}\"\n"
 
     echo "入力された情報は以下の通りです"
 

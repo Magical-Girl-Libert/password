@@ -1,7 +1,9 @@
 #!/bin/bash
 shopt -s expand_aliases
 passinfo.get(){
+	IFS="$(echo -e '\t' )"
 	local array=(`cat ~/.password/pass/$1`)
+	unset IFS
 	if [ $# -gt 1  ]; then
 		case "${2,,}" in
 			"all" 	  ) 
