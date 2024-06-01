@@ -67,9 +67,9 @@ EOL
         length=0
         while [ ${exprresult} -ge 2 ] || [ ${length} -gt 32 ] || [ ${length} -lt 1 ]
         do
-            echo -n "パスワードの長さを入力して下さい(最大32)："
+            echo -n "パスワードの長さを入力して下さい(デフォルト:16 最大32)："
             read length
-            length=${length:-32}
+            length=${length:-16}
             expr ${length} + 1 >&/dev/null
             exprresult=$?
             if [ ${exprresult} -eq 2 ]; then
@@ -148,6 +148,15 @@ EOL
     do
         echo -e ${l} >> $exseed
     done
+
+    sleep 1
+    local help="# 生成オプション\n"
+    help=$help"# 0:NO_GENERATE       パスワード生成しない\n"
+    help=$help"# 1:PATTERN_NUMBER    数値のみ(非推奨)       10進数\n"
+    help=$help"# 2:PATTERN_ALPHA     数値とアルファベット     62進数\n"
+    help=$help"# 3:PATTERN_ASCII     数値とアルファベットと記号 94進数\n"
+    help=$help"# 4:PATTERN_ALPHA_ADD 数値とアルファベットに加えADD_ASCIIの記号も追加"
+    sed -i "1i$help" $exseed
 
     echo "seedファイルの生成が完了しました"
     echo  -n "passwordを生成しますか？:"
