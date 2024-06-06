@@ -34,12 +34,12 @@ function passgen(){
                 #ハッシュ生成
                 local sha=`echo -n ${USER_ID}${SALT}`
                 for (( i=1; i <= ${HASH_LOOP}; i++ )); do
-                    sha=`echo -n ${sha} | openssl ${ALGORITHM} | sed -e "s/(stdin)= //"`
+                    sha=`echo -n ${sha} | openssl ${ALGORITHM} | sed -e "s/.*= //"`
                     echo "${i}回目のハッシュ化結果:${sha}"
                 done
                 local passwordstr=""
                 for (( i=0; i < ${#sha}; i+=2 )); do
-                    local hextodec=`printf "%d" 0x${sha:i:2}`
+                    local hextodec=`printf "%d" "0x${sha:i:2}"`
                     local ascii=$((${hextodec} % ${#PATTERN_STR}))
                     local passwordstr=${passwordstr}${PATTERN_STR:${ascii}:1}
                 done
